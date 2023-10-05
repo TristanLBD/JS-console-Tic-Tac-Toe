@@ -1,0 +1,134 @@
+// ----------------- Leblond Tristan - Live Campus ----------------- \\
+Fonction placerElement(emplacement_ligne: entier, emplacement_colonne: entier, tableau grille[3][3]: caractère , symbole: caractère): tableau
+Variables
+Debut
+    grille[emplacement_ligne][emplacement_colonne] <- symbole
+    Retourner(grille)
+Fin
+
+
+Fonction connaitreSymbol(coups_restants: entier): caractère
+Variables symbole: caractère
+Debut
+    symbole <- "X"
+    Si coups_restants % 2 = 0 Alors
+        symbole <- "O"
+    FinSi
+    Retourner(symbole)
+Fin
+
+
+Fonction checker_gagnant(tableau grille[3][3]: caractère): caractère
+Variables diagonale_droite, diagonale_gauche, texte: caractère
+            i, j : entier
+Debut
+    // Parcourir les lignes
+    Pour i AllantDe 0 A 2 ParPasDe 1
+        texte <- ''
+        Pour j AllantDe 0 A 2 ParPasDe 1
+            texte <- texte & grille[i][j]
+        FinPour
+        Si texte = "XXX" Alors
+            Retourner("X")
+        Sinon
+            Si texte = "OOO" Alors
+                Retourner("O")
+            FinSi
+        FinSi
+    FinPour
+
+    // Parcourir les colonnes
+    Pour i AllantDe 0 A 2 ParPasDe 1
+        texte <- ''
+        Pour j AllantDe 0 A 2 ParPasDe 1
+            texte <- texte & grille[j][i]
+        FinPour
+        Si texte = "XXX" Alors
+            Retourner("X")
+        Sinon
+            Si texte = "OOO" Alors
+                Retourner("O")
+            FinSi
+        FinSi
+    FinPour
+
+    // Vérifier les diagonales
+    diagonale_droite <- diagonale_droite & grille[0][0]
+    diagonale_droite <- diagonale_droite & grille[1][1]
+    diagonale_droite <- diagonale_droite & grille[2][2]
+
+    diagonale_gauche <- diagonale_gauche & grille[0][2]
+    diagonale_gauche <- diagonale_gauche & grille[1][1]
+    diagonale_gauche <- diagonale_gauche & grille[2][0]
+
+    Si diagonale_droite = "XXX" OU diagonale_gauche = "XXX" Alors
+        Retourner("X")
+    Sinon
+        Si diagonale_droite = "OOO" OU diagonale_gauche = "OOO" Alors
+            Retourner("O")
+        Sinon
+            Retourner("A")
+        FinSi
+    FinSi
+Fin
+
+
+Algorithme start_game
+Variables
+    coups_restants, emplacement_ligne, emplacement_colonne, choix: entier
+    tableau grille_de_jeu[3][3]: caractère
+    position_invalide: booléen
+    joueur : caractère
+Debut
+    coups_restants <- 9
+    grille_de_jeu <- [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+    Afficher("Tour : 0")
+    Afficher(grille_de_jeu)
+
+    TantQue coups_restants != 0
+        // Savoir quel joueur joue
+        joueur <- connaitreSymbol(coups_restants)
+        position_invalide <- Vrai
+
+        TantQue position_invalide
+            emplacement_ligne <- 5
+            emplacement_colonne <- 5
+
+            // Connaitre la ligne désirée
+            TantQue emplacement_ligne > 3 OU emplacement_ligne < 0
+                Afficher("Joueur " & joueur & " : choisissez une ligne")
+                emplacement_ligne <- Lire(choix)
+                emplacement_ligne <- emplacement_ligne - 1
+            FinTantQue
+
+            // Connaitre la colonne désirée
+            TantQue emplacement_colonne > 3 OU emplacement_colonne < 0
+                Afficher("Joueur " & joueur & " : choisissez une colonne")
+                emplacement_colonne <- Lire(choix)
+                emplacement_colonne <- emplacement_colonne- 1
+            FinTantQue
+
+            // Si l'emplacement sélectionné est déjà pris, on continue la boucle, sinon on en sort
+            Si grille_de_jeu[emplacement_ligne][emplacement_colonne] = ' '
+                position_invalide <- Faux
+            FinSi
+        FinTantQue
+
+        // Placer l'élément sur la grille avec le symbole correspondant
+        grille_de_jeu <- placerElement(emplacement_ligne, emplacement_colonne, grille_de_jeu, joueur)
+
+        Afficher("Tour : " & (10 - coups_restants) & "Joueur : " & joueur)
+        Afficher(grille_de_jeu)
+
+        coups_restants <- coups_restants - 1
+
+        Si checker_gagnant(grille_de_jeu) != "A" Alors
+            Afficher("Le joueur " & joueur & " a gagné !")
+            Retourner();
+        FinSi
+
+    FinTantQue
+
+    Afficher("Partie terminée ! Égalité !")
+Fin
+// ----------------- Leblond Tristan - Live Campus ----------------- \\

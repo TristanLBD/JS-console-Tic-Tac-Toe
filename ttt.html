@@ -1,0 +1,80 @@
+<script>
+    function placerElement(emplacement_ligne,emplacement_colone,grille,symbol) {
+        grille[emplacement_ligne][emplacement_colone] = symbol;
+        return grille;
+    }
+
+    function connaitreSymbol(coups_restants) {
+        var symbol = "X"
+        if(coups_restants%2 == 0) { symbol = "O"; }
+        return symbol;
+    }
+
+    function checker_gagnant(grille) {
+        // On parcour les lignes
+        for (let i = 0; i < 3; i++) {
+            var text = '';
+            for (let j = 0; j < 3; j++) {
+                text = text + grille[i][j]
+            }
+            if(text == "XXX") { return("X") }
+            if(text == "OOO") { return("O") }
+        }
+
+        // On parcour les colones
+        for (let i = 0; i < 3; i++) {
+            var text = '';
+            for (let j = 0; j < 3; j++) {
+                text = text + grille[j][i]
+            }
+            if(text == "XXX") { return("X") }
+            if(text == "OOO") { return("O") }
+        }
+        
+        // On parcour les colones
+        var diagonale_droite = grille[0][0] + grille[1][1] + grille[2][2];
+        var diagonale_gauche = grille[0][2] + grille[1][1] + grille[2][0];
+        if(diagonale_droite == "OOO" || diagonale_gauche == "OOO") { return("O"); }
+        else if(diagonale_droite == "XXX" || diagonale_gauche == "XXX") { return("X"); }
+        else { return("A"); }
+    }
+
+    function startGame() {
+        coups_restants = 9
+        grille_de_jeu = [[' ',' ',' '],[' ',' ',' '],[' ',' ',' ']]
+        console.log("Tour : 0") 
+        console.table(grille_de_jeu);
+
+        while(coups_restants != 0) {
+            // Savoir quel joueur joue
+            var joueur = connaitreSymbol(coups_restants);
+            var position_invalide = true;
+
+
+            while(position_invalide) {
+                var emplacement_ligne = 5;
+                var emplacement_colone = 5;
+                // Connaitre la ligne désirée
+                while(emplacement_ligne > 3 || emplacement_ligne < 0) { emplacement_ligne = prompt('Joueur ' + joueur + ' : choisissez une ligne') - 1; }
+                // Connaitre la colone désirée
+                while(emplacement_colone > 3 || emplacement_colone < 0) { emplacement_colone = prompt('Joueur ' + joueur + ' : choisissez une colone') - 1; }
+                // Si l'emplacement selectionné est déja pris on continue la boucle, sinon on en sort
+                if(grille_de_jeu[emplacement_ligne][emplacement_colone] == ' ') { position_invalide = false; }
+            }
+            
+            // Placer l'element sur la grille avec le symbol correspondant
+            grille_de_jeu = placerElement(emplacement_ligne,emplacement_colone,grille_de_jeu,joueur)
+
+            console.log("Tour : " + (10 - coups_restants)) 
+            console.log("Joueur : " + joueur) 
+            console.table(grille_de_jeu);
+
+            coups_restants--
+            if(checker_gagnant(grille_de_jeu) != "A") {
+                console.log("Le joueur " + joueur + " a gagné !");
+                return;
+            }
+        }
+        console.log("Partie terminée ! Égalité !")
+    }
+</script>
